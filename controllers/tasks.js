@@ -13,7 +13,7 @@ const getTasks = async (req, res) => {
 };
 const getTask = async (req, res) => {
   try {
-    const taskId = req.params.id;
+    const taskId = parseInt(req.params.id);
     const task = prisma.task.findUnique({
       where: {
         id: taskId,
@@ -28,23 +28,11 @@ const getTask = async (req, res) => {
 
 const setTask = async (req, res) => {
   try {
-    const { userId, title, description, status } = req.body;
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
+    const { title, description } = req.body;
     const task = await prisma.task.create({
       data: {
         title,
         description,
-        status,
-        user: {
-          connect: {
-            id: userId,
-          },
-        },
       },
     });
     res.json(task);
@@ -55,6 +43,19 @@ const setTask = async (req, res) => {
 };
 const updateTask = async (req, res) => {
   try {
+    const taskId = parseInt(req.params.id);
+    const { title, description, assignedUsers } = req.body;
+    const task = await prisma.task.update({
+      where: {
+        id: taskId,
+      },
+      data: {
+        title,
+        description,
+        assignedUsers,
+      },
+    });
+    res.json(task);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: `Interval server error, ${error}` });

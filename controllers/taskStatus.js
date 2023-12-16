@@ -13,14 +13,11 @@ const getTasksStatus = async (req, res) => {
 };
 const getTaskStatus = async (req, res) => {
   try {
-    const taskStatusId = req.params.id;
+    const taskStatusId = parseInt(req.params.id);
+
     const taskStatus = await prisma.tasksStatus.findUnique({
       where: {
         id: taskStatusId,
-      },
-      include: {
-        task: true,
-        user: true,
       },
     });
     res.json(taskStatus);
@@ -29,9 +26,18 @@ const getTaskStatus = async (req, res) => {
     res.status(500).json({ message: `Interval server error, ${error}` });
   }
 };
+
 const setTaskStatus = async (req, res) => {
   try {
     const { status, userId, taskId } = req.body;
+
+    const userExists = await prisma.user.findUnique({ where: { id: userId } });
+    const taskExists = await prisma.task.findUnique({ where: { id: taskId } });
+
+    if (!userExists || !taskExists) {
+      return res.status(400).json({ message: "User or Task does not exist." });
+    }
+
     const taskStatus = await prisma.tasksStatus.create({
       data: {
         status,
@@ -45,6 +51,7 @@ const setTaskStatus = async (req, res) => {
     res.status(500).json({ message: `Interval server error, ${error}` });
   }
 };
+
 const updateTaskStatus = async (req, res) => {
   try {
     const taskStatusId = parseInt(req.params.id);
@@ -59,22 +66,7 @@ const updateTaskStatus = async (req, res) => {
         userId,
       },
     });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: `Interval server error, ${error}` });
-  }
-};
-const deleteTaskStatus = async (req, res) => {
-  try {
-    const taskStatusId = parseInt(req.params.id);
-    const taskStatus = await prisma.tasksStatus.delete({
-      where: {
-        id: taskStatusId,
-      },
-    });
-    taskStatus
-      ? res.status(200).json({ message: "TaskStatus is deleted" })
-      : res.status(404).json({ message: "TaskStatus is deleted" });
+    res.json(taskStatus);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: `Interval server error, ${error}` });
@@ -86,5 +78,4 @@ module.exports = {
   getTaskStatus,
   setTaskStatus,
   updateTaskStatus,
-  deleteTaskStatus,
 };

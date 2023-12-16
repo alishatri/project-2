@@ -4,12 +4,15 @@ const {
   getTaskStatus,
   setTaskStatus,
   updateTaskStatus,
-  deleteTaskStatus,
 } = require("../controllers/taskStatus");
+
+const {
+  setTaskStatusValidationRules,
+  validate,
+} = require("../middlewares/TaskStatusValidator");
 
 router.get("/", getTasksStatus);
 router.get("/:id", getTaskStatus);
-router.post("/", setTaskStatus);
-router.put("/", updateTaskStatus);
-router.delete("/:id", deleteTaskStatus);
+router.post("/", setTaskStatusValidationRules, validate, setTaskStatus);
+router.put("/:id", updateTaskStatus);
 module.exports = router;

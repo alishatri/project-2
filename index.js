@@ -13,7 +13,7 @@ app.use(cors());
 
 app.use("/api/users", userRouters);
 app.use("/api/tasks", taskRouters);
-app.use("/api/tasksStatus", taskStatusRouters);
+app.use("/api/tasks-status", taskStatusRouters);
 
 app.listen(port, () => {
   console.log(port, `You are in port ${port}`);
