@@ -24,10 +24,10 @@ model Task {
   id             Int       @id @default(autoincrement())
   title          String
   description    String
-  status         TasksStatus[]
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   assignedUsers  User[]
+  taskStatus     TasksStatus[]
 }
 
 model TasksStatus {

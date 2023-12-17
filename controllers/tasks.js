@@ -2,30 +2,6 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-const getTasks = async (req, res) => {
-  try {
-    const tasks = prisma.task.findMany();
-    res.json(tasks);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: `Interval server error, ${error}` });
-  }
-};
-const getTask = async (req, res) => {
-  try {
-    const taskId = parseInt(req.params.id);
-    const task = prisma.task.findUnique({
-      where: {
-        id: taskId,
-      },
-    });
-    res.json(task);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: `Interval server error, ${error}` });
-  }
-};
-
 const setTask = async (req, res) => {
   try {
     const { title, description } = req.body;
@@ -41,6 +17,31 @@ const setTask = async (req, res) => {
     res.status(500).json({ message: `Interval server error, ${error}` });
   }
 };
+
+const getTasks = async (req, res) => {
+  try {
+    const tasks = await prisma.task.findMany();
+    res.json(tasks);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: `Interval server error, ${error}` });
+  }
+};
+const getTask = async (req, res) => {
+  try {
+    const taskId = parseInt(req.params.id);
+    const task = await prisma.task.findUnique({
+      where: {
+        id: taskId,
+      },
+    });
+    res.json(task);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: `Interval server error, ${error}` });
+  }
+};
+
 const updateTask = async (req, res) => {
   try {
     const taskId = parseInt(req.params.id);
