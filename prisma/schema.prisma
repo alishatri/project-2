@@ -11,36 +11,35 @@ datasource db {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
+  id            Int          @id @default(autoincrement()) @unique
   name          String
   role          String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  taskStatus    TasksStatus[]
-  assignedTask  Task[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  taskStatus    TasksStatus[] @relation("userTaskStatus")
+  assignedTask  Task[]        @relation("assignedUsers")
 }
 
 model Task {
-  id             Int       @id @default(autoincrement())
+  id             Int          @id @default(autoincrement()) @unique
   title          String
-  description    String
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  assignedUsers  User[]
-  taskStatus     TasksStatus[]
+  description    String       
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  assignedUsers  User[]       @relation("assignedUsers")
+  taskStatus     TasksStatus[] @relation("taskStatus")
 }
 
 model TasksStatus {
-  id              Int       @id @default(autoincrement())
+  id              Int          @id @default(autoincrement()) @unique
   status          TaskStatus
   userId          Int
   taskId          Int
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  user            User?      @relation(fields: [userId], references: [id])
-  task            Task?      @relation(fields: [taskId], references: [id])
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  user            User?        @relation("userTaskStatus", fields: [userId], references: [id])
+  task            Task?        @relation("taskStatus", fields: [taskId], references: [id], onDelete: Cascade)
 }
-
 
 enum TaskStatus {
   TO_DO

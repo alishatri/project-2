@@ -75,7 +75,7 @@ const deleteTask = async (req, res) => {
       : res.status(404).json({ message: `Task with id ${taskId} not found` });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: `Interval server error, ${error}` });
+    res.status(500).json({ message: `Interval server error, /n${error}` });
   }
 };
 

@@ -34,10 +34,6 @@ const setTaskStatus = async (req, res) => {
     const userExists = await prisma.user.findUnique({ where: { id: userId } });
     const taskExists = await prisma.task.findUnique({ where: { id: taskId } });
 
-    if (!userExists || !taskExists) {
-      return res.status(400).json({ message: "User or Task does not exist." });
-    }
-
     const taskStatus = await prisma.tasksStatus.create({
       data: {
         status,
@@ -45,7 +41,9 @@ const setTaskStatus = async (req, res) => {
         userId,
       },
     });
-    res.json(taskStatus);
+    userExists || taskExists
+      ? res.status(200).json(taskStatus)
+      : res.status(404).json({ message: "User or Task does not exist." });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: `Interval server error, ${error}` });
